@@ -10,7 +10,7 @@ x-python-env: &python-env
 
 services:
     vlei-server:
-        image: gleif/vlei:0.2.0
+        image: gleif/vlei:1.0.6
         environment:
             <<: *python-env
         command: vLEI-server -s ./schema/acdc -c ./samples/acdc/ -o ./samples/oobis/
@@ -21,7 +21,7 @@ services:
             - 7723:7723
 
     keria:
-        image: ${KERIA_IMAGE:-weboftrust/keria}:${KERIA_IMAGE_TAG:-0.2.0-rc2}
+        image: ${KERIA_IMAGE:-gleif/keria}:${KERIA_IMAGE_TAG:-0.4.6}
         environment:
             KERI_AGENT_CORS: 1
             <<: *python-env
@@ -37,11 +37,12 @@ services:
             - 3903:3903
 
     witness-demo:
-        image: weboftrust/keri-witness-demo:1.1.0
+        image: gleif/keri:1.2.18
+        entrypoint: ['kli', 'witness', 'demo']
         environment:
             <<: *python-env
         healthcheck:
-            test: curl -f http://localhost:5642/oobi
+            test: wget --spider http://witness-demo:5642/oobi
             <<: *healthcheck
         volumes:
             - ./config/witness-demo:/keripy/scripts/keri/cf/main
